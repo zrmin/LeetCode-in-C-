@@ -149,28 +149,116 @@
 
 6. Z字形变换
 
+   这是找规律的题目，从下标入手。第一行和最后一行的公差都是2*n-2，其余行是两个等差数列交错的，他们的公差都是2*n-2，交错的数列的首项是i，第二个等差数列的首项是2*n-2-i。
+
    ```c++
+   class Solution {
+   public:
+       string convert(string s, int n) {
+           if(n == 1) return s;
+   
+           string res;
+           for(int i = 0; i < n; ++i) {
+               if(i == 0 || i == n - 1) {
+                   for(int j = i; j < s.size(); j += 2*n - 2) {
+                       res += s[j];
+                   }
+               }
+               else {
+                   for(int j = i, k = 2*n-2-i; j < s.size() || k < s.size(); j += 2*n-2, k += 2*n-2) {
+                       if(j < s.size()) res += s[j];
+                       if(k < s.size()) res += s[k];
+                   }
+               }
+           }
+   
+           return res;
+       }
+   };
    ```
 
    
 
 7. 整数反转
 
+   将整数中的每个数位拆分出来，并逆序组合，在组合之前，还要判断即将组合而成的数是否溢出，针对溢出，需要考虑正数和负数两种情况。
+
    ```C++
+   class Solution {
+   public:
+       int reverse(int x) {
+           int res = 0;
+           while(x) {
+               if(x > 0) if(res > (INT_MAX - x%10)/10) return 0;
+               if(x < 0) if(res < (INT_MIN - x%10)/10) return 0;
+               res = res*10 + x%10;
+               x /= 10;
+           }
+   
+           return res;
+       }
+   };
    ```
 
    
 
 8. 字符串转换整数（atoi）
 
+   首先要把字符串前面的空格除掉（有可能字符串都是空格）。然后还要判断正负。
+
+   接着字符串分解，组合成整数，在组合成整数前，需要分，正负号判断是否越界。由于在分解字符串的过程中，res是整数，也就是说我们是按照绝对值的方式来计算整数的大小的，我们知道负数的绝对值比正数的绝对值大1，所以如果负数的res正好等于INT_MIN，那么下面的res = res * 10 + (s[k] - '0')是正数，它是会溢出的，所以需要对-res==INT_MIN进行特判。
+
    ```C++
+   class Solution {
+   public:
+       int myAtoi(string s) {
+           int k = 0;
+           while(s[k] == ' ' && k < s.size()) k++;
+           if(k == s.size()) return 0;
+   
+           int minus = 1;
+           if(s[k] == '-') minus = -1, k++;
+           else if(s[k] == '+') k++;
+   
+           int res = 0;
+           while(k < s.size() && s[k] >= '0' && s[k] <= '9') {
+               if(minus == 1) if(res > (INT_MAX - (s[k] - '0')) / 10) return INT_MAX;
+               if(minus == -1) if(-res < (INT_MIN + (s[k] - '0')) / 10) return INT_MIN; 
+               if(-res*10 - (s[k] - '0') == INT_MIN) return INT_MIN;
+               res = res * 10 + (s[k] - '0');
+               k++;
+           }
+   
+           res = res*minus;
+           if(res < INT_MIN) return INT_MIN;
+           if(res > INT_MAX) return INT_MAX;
+   
+           return res;
+       }
+   };
    ```
 
    
 
 9. 回文数
 
+   这题还是可以用整数分解来做，而且没有要求int，所以可以用long long来存储翻转后的正整数，然后比较翻转后的数和原始的数是否相等。
+
    ```C++
+   class Solution {
+   public:
+       bool isPalindrome(int x) {
+           if(x < 0) return false;
+           int y = x;
+           long long res = 0;
+           while(x) {
+               res = res * 10 + x % 10;
+               x /= 10;
+           }
+   
+           return res == y;
+       }
+   };
    ```
 
    
