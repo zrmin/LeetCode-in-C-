@@ -59,6 +59,27 @@
 13. 罗马数字转整数
 
     ```C++
+    class Solution {
+    public:
+        int romanToInt(string s) {
+            unordered_map<char, int> map;
+            map['I'] = 1;
+            map['V'] = 5;
+            map['X'] = 10;
+            map['L'] = 50;
+            map['C'] = 100;
+            map['D'] = 500;
+            map['M'] = 1000;
+    
+            int res = 0;
+            for(int i = 0; i < s.size(); ++i) {
+                if(i+1 < s.size() && map[s[i]] < map[s[i+1]]) res -= map[s[i]];
+                else res += map[s[i]];
+            }
+    
+            return res;
+        }
+    };
     ```
 
     
@@ -66,6 +87,25 @@
 14. 最长公共前缀
 
     ```C++
+    class Solution {
+    public:
+        string longestCommonPrefix(vector<string>& strs) {
+            string res;
+            if(strs.empty()) return res;
+    
+            for(int i = 0; ; i++) {
+                if(i >= strs[0].size()) return res;
+                char c = strs[0][i];
+                for(string& str: strs) {
+                    if(i >= str.size() || str[i] != c) return res;
+                }
+    
+                res += c;
+            }
+    
+            return res;
+        }
+    };
     ```
 
     
